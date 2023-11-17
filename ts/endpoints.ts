@@ -19,20 +19,20 @@ export const app = express();
 
 app.use(CORS, express.urlencoded());
 
-app.get("/article", async (req, res): Promise<any> => {
+app.get("/API/article", async (req, res): Promise<any> => {
   const article = await load.article((req.query["id"] ?? "") as string);
   if(article == null)
     return res.sendStatus(404);
   res.status(200).send(article);
 });
 
-app.get("/articles", async (req, res): Promise<any> => {
+app.get("/API/articles", async (req, res): Promise<any> => {
   const articles = await load.articleList();
   res.status(200).send(articles);
 });
 
-app.get("/images/:image", async (req, res) => {
-  const name = req.path.replace("/images/", "");
+app.get("/API/images/:image", async (req, res) => {
+  const name = req.path.replace("/API/images/", "");
   try {
     res.sendFile(path.join(__dirname, "/data/images/", name));
   } catch (err) {
@@ -41,8 +41,8 @@ app.get("/images/:image", async (req, res) => {
   }
 });
 
-app.get("/gallery*", async (req, res) => {
-  const dir = path.join(__dirname, "data", "images", ...req.path.split("/").map(url => decodeURIComponent(url)).slice(2));
+app.get("/API/gallery*", async (req, res) => {
+  const dir = path.join(__dirname, "data", "images", ...req.path.split("/").map(url => decodeURIComponent(url)).slice(3));
   fs.readdir(dir, (err, files) => {
     if(err == null) {
       res.status(200).send(files);
@@ -61,7 +61,7 @@ app.get("/gallery*", async (req, res) => {
   });
 });
 
-app.get("/admin/update", async (req, res) => {
+app.get("/API/admin/update", async (req, res) => {
   const key = req.query["key"] as string;
   console.log(key);
   const isValid = await validateKey("PARSE_API_KEY", key);
